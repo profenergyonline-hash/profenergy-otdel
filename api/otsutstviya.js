@@ -443,3 +443,99 @@ module.exports = (запрос, ответ) => {
   ответ.status(200).send(этоУстановка ? УСТАНОВКА : СТРАНИЦА);
 };
 
+��� ������ �������: ������� � ������ � �������, ���������
+// ������� �� �����.
+// ����� ����. ������� ������: ��� ��� ��������� ������, �� ����
+// ������, ��� ����� ���������. ������� ������� ��������� �������
+// ����� � ��� �������, ������� � �������������, ���� �� �������.
+var ����� = [
+  ["TASK_VIEW_TOP_PANEL", "����������"]
+];
+
+//: ��� �������� ������ � ������ �����������. ������ �����: ��������
+//: ����� ������ �� �����, � ������ ��� ������� �� �����.
+var ���������� = ["TASK_VIEW_TAB", "TASK_VIEW_SIDEBAR"];
+
+function ���(�����, ������) {
+  return new Promise(function (������) {
+    BX24.callMethod(�����, ������ || {}, function (�����) {
+      ������(�����.error() ? { ����: �����.error_description() || �����.error() }
+                           : { ������: �����.data() });
+    });
+  });
+}
+
+BX24.init(function () {
+  var ����� = location.origin + location.pathname;
+  var ������ = �����[0][0];
+  var ������ = [];
+
+  // ��� ��������� �� ����� ����. ������� �� ���������� �����
+  // � ������ ������� �� ��������� � ���� ������� � ������� �������,
+  // ���� �������� ���������� �� ������. ������� ���������� ������
+  // � ������� ����� ��, ��� �� ����������.
+  ���("placement.get").then(function (�) {
+    var ���� = �.������ || [];
+    ������.push("<li>��������� ������: " +
+                (����.length
+                  ? ����.map(function (�) { return �.placement; }).join(", ")
+                  : "������") + "</li>");
+
+    var ������ = ����.filter(function (�) {
+      return �.placement && �.placement !== ������;
+    });
+
+    return Promise.all(������.map(function (�) {
+      return ���("placement.unbind", {
+        PLACEMENT: �.placement, HANDLER: �.handler
+      }).then(function (�����) {
+        ������.push(�����.����
+          ? '<li class="�����">' + �.placement + ' � �� �������: ' +
+            �����.���� + "</li>"
+          : '<li class="������">' + �.placement + " � �����</li>");
+      });
+    }));
+  }).then(function () {
+    return ���("placement.bind", {
+      PLACEMENT: ������, HANDLER: �����, TITLE: �����[0][1]
+    }).then(function (�����) {
+      // �Handler already binded� ������, ��� ����� ��� ����.
+      // ��� ����, �������� �� ����������, � �� ����.
+      var ��� = �����.���� && /already\\s*binded/i.test(�����.����);
+      ������.push(�����.���� && !���
+        ? '<li class="�����">' + ������ + " � " + �����.���� + "</li>"
+        : '<li class="������">' + ������ +
+          (��� ? " � ��� ������" : " � ������") + "</li>");
+    });
+  }).then(function () {
+    // ����������, ��� ���������� � �����: �� ����� ������ �����,
+    // ��������� �� �� ����� ����, � �� ������ �� ����� ������.
+    return ���("placement.get").then(function (�) {
+      var ����� = (�.������ || []).map(function (�) { return �.placement; });
+      ������.push("<li>��������� ������: " +
+                  (�����.length ? �����.join(", ") : "������") + "</li>");
+    });
+  }).then(function () { ��������(������); });
+});
+
+function ��������(������) {
+  document.getElementById("����").innerHTML =
+    "<ul>" + ������.join("") + "</ul><p>����� ���������.</p>";
+  BX24.installFinish();
+}
+</script></body></html>`;
+
+module.exports = (������, �����) => {
+  const ���� = ������.body || {};
+  const ������������ =
+    ����.PLACEMENT === "DEFAULT" || ����.event === "ONAPPINSTALL";
+
+  �����.setHeader("Content-Type", "text/html; charset=utf-8");
+  // ���� ��������� ������ � ��� � ���������.
+  �����.setHeader(
+    "Content-Security-Policy",
+    "frame-ancestors https://*.bitrix24.ru https://*.bitrix24.com");
+  �����.setHeader("Cache-Control", "no-store");
+  �����.status(200).send(������������ ? ��������� : ��������);
+};
+
