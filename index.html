@@ -459,10 +459,27 @@ th.ч,td.ч{text-align:right;font-variant-numeric:tabular-nums;
   .карточки{grid-template-columns:1fr}
   .дальше{margin-left:0;width:100%}
 }
+/* Читаемость на телефоне при системной тёмной теме.
+   :visited показывает историю именно этого браузера, а не статус тендера. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --текст:#f5efe5; --тихий:#d8d1c9; --бледный:#c3beb9;
+  }
+  :root:not([data-theme="light"]) body .обёртка a:link{
+    color:#ffc8dc !important;
+  }
+  :root:not([data-theme="light"]) body .обёртка a:visited{
+    color:#b7dfff !important;
+  }
+  :root:not([data-theme="light"]) body .обёртка a:hover{
+    text-decoration:underline;
+  }
+}
 </style></head><body>
 <div class="обёртка">
 <h1>Отдел</h1>
-<p class="подзаголовок">ООО «ПРОФЭНЕРДЖИ» · собрано 23.11.2026 19:40 ·
+<p class="подзаголовок">ООО «ПРОФЭНЕРДЖИ» · собрано 23.11.2026 20:03 ·
    данные из ночного разбора, не из портала напрямую</p>
 <div id="замок" hidden>
   <div class="замок-окно">
